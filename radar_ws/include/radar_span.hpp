@@ -13,7 +13,7 @@ class RadarSpan
     public: 
 RadarSpan();
 ~RadarSpan();
-void loadInputFile();
+void orderRadarInput(std::ifstream& input_file);
 
 double getDistance(double& x, double& y);
 double getAngularDistance(double& x, double& y);
