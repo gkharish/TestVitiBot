@@ -27,18 +27,16 @@ double RadarSpan::getAngularDistance(double& x, double& y)
     return ang;
 }
 
-void RadarSpan::loadInputFile()
+void RadarSpan::orderRadarInput(std::ifstream& input_file)
 {
-    std::ifstream input_file_("test_input/input2.txt");
-
-    if (!input_file_.is_open()) {
+    if (!input_file.is_open()) {
         std::cerr << "Failed to open the input file." << std::endl;
         return;
     }
     std::string line;
     
     int idx = 0;
-    while (std::getline(input_file_, line)) {
+    while (std::getline(input_file, line)) {
         std::stringstream iss(line);
         idx++;
 
@@ -55,6 +53,8 @@ void RadarSpan::loadInputFile()
             continue;
        }
 
+        
+
         double x,y;
         iss >> x >> y;
  
@@ -65,12 +65,7 @@ void RadarSpan::loadInputFile()
 
     }
 
-
-    // Display the angles 
-    for (auto ang : angular_dist_store_) {
-        std::cout << ang*180.0/M_PI << std::endl;
-    }
-    std::cout << "Debug: indexed_angular_dist_ " << indexed_angular_dist_.size() << std::endl;;
+    std::cout << "Debug: angular_dist_store_ " << indexed_angular_dist_.size() << std::endl;;
 
     // Sort the array and display the output
     std::sort(indexed_angular_dist_.begin(), indexed_angular_dist_.end(), compareIndices);
@@ -79,16 +74,19 @@ void RadarSpan::loadInputFile()
     // std::vector<int> sortedIndices;
     for (const auto &pair : indexed_angular_dist_) {
         sorted_obstacle_index_.push_back(pair.first);
-        std::cout << pair.first << " " << pair.second*180.0/M_PI << std::endl;
+        std::cout << pair.first << " ";
     }
 
 }
 
 int  main(int * argc, char ** argv)
 {
-    std::cout << "Hello Radar world!" << std::endl;
+    std::cout << "'Hello Radar world!\n" << std::endl;
+    std::ifstream input_file("test_input/input2.txt");
     RadarSpan rad_span;
-    rad_span.loadInputFile();
-    std::cout << " Radara spannig done!!" << std::endl;
+    rad_span.orderRadarInput(input_file);
+    std::cout << "\n\n Radara spannig done!!" << std::endl;
+    input_file.close();
 
 }
+

@@ -23,7 +23,6 @@ double getAngularDistance(double& x, double& y);
 
 private:
 std::vector<std::pair<int, double>> indexed_angular_dist_;
-std::vector<double> angular_dist_store_;
 std::vector<int> sorted_obstacle_index_;
 
 
