@@ -44,16 +44,13 @@ void RadarSpan::orderRadarInput(std::ifstream& input_file)
         {   
             iss >> visibility_range_;
             continue;
-        }
-            
+        }           
        
        if(idx == 2)
        {
             iss >> number_obstacles_;
             continue;
        }
-
-        
 
         double x,y;
         iss >> x >> y;
@@ -65,15 +62,13 @@ void RadarSpan::orderRadarInput(std::ifstream& input_file)
 
     }
 
-    std::cout << "Debug: angular_dist_store_ " << indexed_angular_dist_.size() << std::endl;;
+    std::cout << "Debug: angular_dist_store_ " << indexed_angular_dist_.size() << std::endl;
 
-    // Sort the array and display the output
+    // Sort the array 
     std::sort(indexed_angular_dist_.begin(), indexed_angular_dist_.end(), compareIndices);
     
-    // Extract the sorted indices
-    // std::vector<int> sortedIndices;
+    // Extract the sorted indices and display the output
     for (const auto &pair : indexed_angular_dist_) {
-        sorted_obstacle_index_.push_back(pair.first);
         std::cout << pair.first << " ";
     }
 
@@ -82,10 +77,12 @@ void RadarSpan::orderRadarInput(std::ifstream& input_file)
 int  main(int * argc, char ** argv)
 {
     std::cout << "'Hello Radar world!\n" << std::endl;
-    std::ifstream input_file("test_input/input2.txt");
+    std::ifstream input_file("test_input/input5.txt");
+
     RadarSpan rad_span;
     rad_span.orderRadarInput(input_file);
-    std::cout << "\n\n Radara spannig done!!" << std::endl;
+
+    std::cout << "\n\n Radar spannig done!!" << std::endl;
     input_file.close();
 
 }
