@@ -52,6 +52,10 @@ void  LinearRegression::calculateSlope()
 void LinearRegression::extractDataFromInput(const std::string file_name)
 {
     std::ifstream input_file(file_name);
+    if (!input_file.is_open()) {
+        std::cerr << "Failed to open the input file." << std::endl;
+        return;
+    }
     std::string line;
 
 
