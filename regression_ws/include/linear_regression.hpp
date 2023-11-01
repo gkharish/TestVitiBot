@@ -16,7 +16,7 @@ public:
     ~LinearRegression();
 
     void  calculateSlope();
-    void  calculateIntercept();
+    void  calculateSlopeIntercept();
 
     float predict(float& input_x);
     float sumOfSquaredError();
@@ -24,9 +24,12 @@ public:
     float errorIn(float num);
 
     void extractDataFromInput(const std::string file_name);
+    std::vector<float> getModel();
+
 
 private:
-    float m_model[2] = {0.f, 0.f};
+    // float m_model[2] = {0.f, 0.f};
+    std::vector<float>m_model;
     std::vector<float> m_x;
     std::vector<float> m_y;
 
@@ -40,5 +43,4 @@ private:
 
     // regression parameter
     
-
 };
