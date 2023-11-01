@@ -6,3 +6,6 @@ set(CMAKE_CXX_STANDARD 17)
 
 add_executable(regrssion_node src/linear_regression.cpp)
 target_include_directories(regrssion_node PUBLIC include/)
+
+add_executable(ransac_node src/ransac.cpp)
+target_include_directories(ransac_node PUBLIC include/)

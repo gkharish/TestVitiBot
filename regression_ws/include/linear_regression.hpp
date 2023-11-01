@@ -11,11 +11,10 @@ class LinearRegression
 {
 public:
 
-    LinearRegression();
+    LinearRegression(int n);
 
     ~LinearRegression();
 
-    void  calculateSlope();
     void  calculateSlopeIntercept();
 
     float predict(float& input_x);
@@ -24,11 +23,11 @@ public:
     float errorIn(float num);
 
     void extractDataFromInput(const std::string file_name);
+    
     std::vector<float> getModel();
 
-
 private:
-    // float m_model[2] = {0.f, 0.f};
+    int m_length;
     std::vector<float>m_model;
     std::vector<float> m_x;
     std::vector<float> m_y;
