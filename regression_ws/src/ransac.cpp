@@ -1,6 +1,6 @@
 #include "ransac.hpp"
 
-Ransac::Ransac(int n, int k,  int d, float t ):n(n), k(k), d(d), t(t)
+Ransac::Ransac(int n, int k,  int d, double t ):n(n), k(k), d(d), t(t)
 {
 
 }
@@ -13,7 +13,7 @@ Ransac::~Ransac()
 std::pair<double, double>  Ransac::calculateSlopeIntercept(std::vector<float>& x, std::vector<float>& y)
 {
     auto data_size = x.size();
-    float sum_x = 0.0, sum_y = 0.0, sum_xy = 0.0, sum_x2 = 0.0;
+    double sum_x = 0.0, sum_y = 0.0, sum_xy = 0.0, sum_x2 = 0.0;
 
     for (auto i =0; i < data_size; i++)
     {
@@ -25,19 +25,19 @@ std::pair<double, double>  Ransac::calculateSlopeIntercept(std::vector<float>& x
     }
 
         // intercept
-    float numerator_intercept
+    double numerator_intercept
             = (sum_y *sum_x2 - sum_x * sum_xy);
     
-    float denominator
+    double denominator
             = (data_size * sum_x2 - sum_x * sum_x);
     
-    float intercept = numerator_intercept / denominator;
+    double intercept = numerator_intercept / denominator;
 
     // Slope
-    float numerator_slope
+    double numerator_slope
             = (data_size*sum_xy - sum_x * sum_y);
     
-    float slope = numerator_slope / denominator;
+    double slope = numerator_slope / denominator;
 
     return std::make_pair(slope, intercept);
 }
@@ -78,35 +78,52 @@ void Ransac::generateRandomSamples(int num_sample)
     std::mt19937 gen(rd());
     std::uniform_int_distribution<int> distribution(0, data_size - 1);
 
-    m_nonselected_x = m_x;
-    m_nonselected_y = m_y;
+    // Getting selected n samples
+    std::vector<int> selected_index;
     for (int i = 0; i < num_sample; ++i) 
     {
         int index = distribution(gen);
         m_random_x.push_back(m_x[index]);
         m_random_y.push_back(m_y[index]);
-        m_nonselected_x.erase(m_nonselected_x.begin() + index);
-        m_nonselected_y.erase(m_nonselected_y.begin() + index);
+        selected_index.push_back(index);
     }
-    std::cout << "Debug in generateRandomSamples: " << m_random_x.size() << ", " << m_nonselected_x.size() << ", " << m_x.size() << std::endl;
+
+    // Getting a vector of non selected samples
+    for(int i = 0; i < data_size; ++i)
+    {
+        bool is_already_selected = false ;
+        for(int j =0; j < num_sample; ++j)
+        {
+            if (i == selected_index[j])
+            {
+                is_already_selected = true;
+                break;
+            }
+        }
+        if(!is_already_selected)
+        {
+            m_nonselected_x.push_back(m_x[i]);
+            m_nonselected_y.push_back(m_y[i]);
+        }
+        
+    }
 }
 
-float Ransac::getDistanceFromLineError(float x, float y, float slope, float intercept)
+double Ransac::getDistanceFromLineError(float x, float y, double slope, double intercept)
 {
-    auto dist = std::abs(slope * x - y + intercept) / std::sqrt( slope* slope + 1);
-
-     std::cout << "getDistanceFromLineError: "  << x << ", " << y  << ", " << slope << ", " << intercept << std::endl;
-
+    double dist = std::abs(slope * x - y + intercept) / std::sqrt( slope* slope + 1);
     return dist;
 }
 
-double Ransac::sumOfSquaredError(std::vector<float>selected_x, std::vector<float>selected_y, float slope, float intercept)
+double Ransac::sumOfSquaredError(std::vector<float>selected_x, std::vector<float>selected_y, double slope, double intercept)
 {
-    float sumError = 0.f;
+    double  sumError = 0.0;
     for (auto i =0; i < selected_x.size(); i++)
     {
         sumError += getDistanceFromLineError(selected_x[i], selected_y[i], slope, intercept);
     }
+    std::cout << "Debug in sumOfSquaredError:1 "  << ", "<< sumError << std::endl;
+    return sumError;
 }
 
 // main algo is here!
@@ -133,12 +150,11 @@ std::pair<double, double>  Ransac::ransacFit()
                 m_random_y.push_back(m_nonselected_y[i]);
             }
         }
-    
+
         if (m_random_x.size() > d)
         {
             auto better_model = calculateSlopeIntercept(m_random_x, m_random_y);
             auto sum_err = sumOfSquaredError(m_random_x, m_random_y, better_model.first, better_model.second);
-
             if (sum_err < best_error)
             {
                 best_model = better_model;
@@ -152,7 +168,9 @@ std::pair<double, double>  Ransac::ransacFit()
         m_nonselected_y.clear();
 
         iterations++;
+
         std::cout << "Debug in ransacFit: iter="<< iterations << std::endl;
+
     }
 
     return best_model;
@@ -168,7 +186,7 @@ int  main(int * argc, char ** argv)
     int n = 2;
     int k = 85;
     int d = 20;
-    float t =  0.02;
+    double t =  0.02;
 
     Ransac ransac(n,k,d,t);
     ransac.extractDataFromInput(input_file_name);

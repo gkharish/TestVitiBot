@@ -12,18 +12,13 @@ class Ransac
 {
 public:
 
-    Ransac(int n, int k,  int d, float t );
+    Ransac(int n, int k,  int d, double  t );
 
     ~Ransac();
 
 
     std::pair<double, double>  calculateSlopeIntercept(std::vector<float>& x, std::vector<float>& y);
     
-    float predict(float& input_x);
-    
-    float sumOfSquaredError();
-
-    float errorIn(float num);
 
     void extractDataFromInput(const std::string file_name);
     
@@ -31,9 +26,9 @@ public:
 
     void errorModel();
 
-    float getDistanceFromLineError(float x, float y, float slope, float intercept);
+    double getDistanceFromLineError(float x, float y, double slope, double intercept);
 
-    double sumOfSquaredError(std::vector<float>selected_x, std::vector<float>selected_y, float slope, float intercept);
+    double sumOfSquaredError(std::vector<float>selected_x, std::vector<float>selected_y, double slope, double intercept);
     
     std::pair<double, double>  ransacFit();
 
@@ -42,9 +37,10 @@ private:
     std::vector<float> m_x, m_random_x, m_nonselected_x;
     std::vector<float> m_y, m_random_y, m_nonselected_y;
 
-    float m_slope, m_intercept;
+    double m_slope, m_intercept;
+    
     int n, k, d;
-    float t;
+    double  t;
 
     // regression parameter
     
