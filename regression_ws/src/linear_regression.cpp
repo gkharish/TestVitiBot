@@ -77,10 +77,21 @@ std::vector<float> LinearRegression::getModel()
     return m_model;
 }
 
-int  main(int * argc, char ** argv)
+int  main(int argc, char ** argv)
 {
     std::cout << "'Linear Regression module!\n" << std::endl;
     std::string input_file_name = ("test_input/input.txt");
+    
+    if (argc != 2) {
+        std::cerr << "Usage: " << argv[0] << " <filename>" << std::endl;
+        std::cout << "WARNING: Using default file name: " << input_file_name << std::endl;
+    }
+    else 
+    {
+        // Get the filename from the command-line arguments.
+        std::string input_file_name = argv[1];
+    }
+
 
     LinearRegression linear_regression(10);
     linear_regression.extractDataFromInput(input_file_name);

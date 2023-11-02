@@ -177,10 +177,20 @@ std::pair<double, double>  Ransac::ransacFit()
 }
 
 
-int  main(int * argc, char ** argv)
+int  main(int argc, char ** argv)
 {
     std::cout << "'Ransac using Linear Regression!\n" << std::endl;
     std::string input_file_name = ("test_input/input.txt");
+
+    if (argc != 2) {
+        std::cerr << "Usage: " << argv[0] << " <filename>" << std::endl;
+        std::cout << "WARNING: Using default file name: " << input_file_name << std::endl;
+    }
+    else 
+    {
+        // Get the filename from the command-line arguments.
+        std::string input_file_name = argv[1];
+    }
 
     // Ransac parameters
     int n = 2;
