@@ -89,7 +89,7 @@ int  main(int argc, char ** argv)
     else 
     {
         // Get the filename from the command-line arguments.
-        std::string input_file_name = argv[1];
+        input_file_name = argv[1];
     }
 
 

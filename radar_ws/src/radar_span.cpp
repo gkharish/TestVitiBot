@@ -74,10 +74,20 @@ void RadarSpan::orderRadarInput(std::ifstream& input_file)
 
 }
 
-int  main(int * argc, char ** argv)
+int  main(int  argc, char ** argv)
 {
     std::cout << "'Hello Radar world!\n" << std::endl;
-    std::ifstream input_file("test_input/input5.txt");
+    std::string input_file_name = "test_input/input5.txt";
+    if (argc != 2) {
+        std::cerr << "Usage: " << argv[0] << " <filename>" << std::endl;
+        std::cout << "WARNING: Using default file name: " << input_file_name << std::endl;
+    }
+    else 
+    {
+        // Get the filename from the command-line arguments.
+        input_file_name = argv[1];
+    }
+    std::ifstream input_file(input_file_name);
 
     RadarSpan rad_span;
     rad_span.orderRadarInput(input_file);
