@@ -28,7 +28,7 @@ public:
     
     void generateRandomSamples(int num_sample);
 
-    void generateRandomSamples2(int num_sample);
+    std::pair<std::vector<Coordinate>, std::vector<Coordinate>> generateRandomSamples2(int num_sample);
 
     void errorModel();
 
@@ -37,6 +37,7 @@ public:
     double sumOfSquaredError(std::vector<Coordinate>& coordinate_list, double slope, double intercept);
    
     std::pair<double, double>  ransacFit();
+    // std::pair<std::vector<Coordinate>, std::vector<Coordinate>> random_filtered_samples;
 
 private:
     int m_length;
@@ -50,7 +51,5 @@ private:
     // regression parameter
     int n, k, d;
     double  t;
-
-
     
 };

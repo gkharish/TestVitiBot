@@ -115,14 +115,14 @@ void Ransac::generateRandomSamples(int num_sample)
     }
 }
 
-void Ransac::generateRandomSamples2(int num_sample)
+std::pair<std::vector<Ransac::Coordinate>, std::vector<Ransac::Coordinate>> Ransac::generateRandomSamples2(int num_sample)
 {
-    auto data_size = m_entire_data_points.size();
+    std::pair<std::vector<Coordinate>, std::vector<Coordinate>> random_filtered_samples;
 
-    if (num_sample <= 0 || num_sample > data_size) 
+    if (num_sample <= 0 || num_sample > m_entire_data_points.size()) 
     {
-        std::cerr << "Invalid sample size." << std::endl;
-        return;
+        std::cerr << "Invalid sample size. " << std::endl;
+        return random_filtered_samples;
     }
 
     std::random_device rd;
@@ -131,18 +131,17 @@ void Ransac::generateRandomSamples2(int num_sample)
     // Randomly shuffle the original data points.
     std::shuffle(m_entire_data_points.begin(), m_entire_data_points.end(), gen);
     
-    // Choose the first 'n' elements as the selected data points 
+    // Choose the first 'n' elements as the selected data points    
     for (int i = 0; i < n; ++i) {
-        m_selected_data_points.push_back(m_entire_data_points[i]);
+        random_filtered_samples.first.push_back(m_entire_data_points[i]);
     }
     
-    // And the rest and the  rest as the non selected.
-    std::vector<int> nonSelectedSamples;
-    
+    // And the rest as the non selected.     
     for (int i = n; i < m_entire_data_points.size(); ++i) {
-        m_nonselected_data_points.push_back(m_entire_data_points[i]);
+        random_filtered_samples.second.push_back(m_entire_data_points[i]);
     }
 
+    return random_filtered_samples;
 }
 
 double Ransac::getDistanceFromLineError(float x, float y, double slope, double intercept)
@@ -173,34 +172,32 @@ std::pair<double, double>  Ransac::ransacFit()
 
     while (iterations < k)
     {
-        generateRandomSamples2(n);
+        auto random_filtered_samples = generateRandomSamples2(n);
+        auto selected_data_points = random_filtered_samples.first;
+        auto nonselected_data_points = random_filtered_samples.second;
 
-        auto model = calculateSlopeIntercept(m_selected_data_points);
+        auto model = calculateSlopeIntercept(selected_data_points);
 
-        for(auto i = 0; i < m_nonselected_data_points.size(); ++i)
+        for(auto i = 0; i < nonselected_data_points.size(); ++i)
         {
-            auto err = getDistanceFromLineError(m_nonselected_data_points[i].x, m_nonselected_data_points[i].y, model.first, model.second);
+            auto err = getDistanceFromLineError(nonselected_data_points[i].x, nonselected_data_points[i].y, model.first, model.second);
             if (err < t)
             {
-                m_selected_data_points.push_back(m_nonselected_data_points[i]);
+                selected_data_points.push_back(nonselected_data_points[i]);
 
             }
         }
 
-        if (m_selected_data_points.size() > d)
+        if (selected_data_points.size() > d)
         {
-            auto better_model = calculateSlopeIntercept(m_selected_data_points);
-            auto sum_err = sumOfSquaredError(m_selected_data_points, better_model.first, better_model.second);
+            auto better_model = calculateSlopeIntercept(selected_data_points);
+            auto sum_err = sumOfSquaredError(selected_data_points, better_model.first, better_model.second);
             if (sum_err < best_error)
             {
                 best_model = better_model;
                 best_error = sum_err;
             }
         }
-
-        // reset all vectors
-        m_selected_data_points.clear();
-        m_nonselected_data_points.clear();
 
         iterations++;
 
