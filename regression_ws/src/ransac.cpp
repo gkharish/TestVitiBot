@@ -58,9 +58,6 @@ void Ransac::extractDataFromInput(const std::string file_name)
         float x,y;
         ss >>x >>y;
 
-        // m_x.push_back(x);
-        // m_y.push_back(y);
-
         Coordinate point;
         point.x = x;
         point.y = y;
@@ -89,10 +86,7 @@ void Ransac::generateRandomSamples(int num_sample)
     for (int i = 0; i < num_sample; ++i) 
     {
         int index = distribution(gen);
-        // m_selected_x.push_back(m_x[index]);
-        // m_selected_y.push_back(m_y[index]);
-
-
+  
         Coordinate point_selected = m_entire_data_points[index];
         m_selected_data_points.push_back(point_selected);
 
@@ -113,8 +107,6 @@ void Ransac::generateRandomSamples(int num_sample)
         }
         if(!is_already_selected)
         {
-            // m_nonselected_x.push_back(m_x[i]);
-            // m_nonselected_y.push_back(m_y[i]);
 
             Coordinate point_nonselected = m_entire_data_points[i];
             m_nonselected_data_points.push_back(point_nonselected);
@@ -162,7 +154,7 @@ std::pair<double, double>  Ransac::ransacFit()
             if (err < t)
             {
                 m_selected_data_points.push_back(m_nonselected_data_points[i]);
-                // m_selected_y.push_back(m_nonselected_y[i]);
+
             }
         }
 
@@ -177,14 +169,9 @@ std::pair<double, double>  Ransac::ransacFit()
             }
         }
         // reset all vectors
-        // m_selected_x.clear();
-        // m_selected_y.clear();
-        // m_nonselected_x.clear();
-        // m_nonselected_y.clear();
-
         m_selected_data_points.clear();
         m_nonselected_data_points.clear();
-        
+
 
         iterations++;
 
@@ -219,10 +206,10 @@ int  main(int argc, char ** argv)
 
     Ransac ransac(n,k,d,t);
     ransac.extractDataFromInput(input_file_name);
-    auto bes_model = ransac.ransacFit();
+    auto best_model = ransac.ransacFit();
 
-    std::cout << "\n Best ransacFit Linear model slope: " << bes_model.first<< std::endl;
-    std::cout << "\n Best ransacFit Linear model intercept: " << bes_model.second<< std::endl;
+    std::cout << "\n Best ransacFit Linear model slope: " << best_model.first<< std::endl;
+    std::cout << "\n Best ransacFit Linear model intercept: " << best_model.second<< std::endl;
 
 }
 
