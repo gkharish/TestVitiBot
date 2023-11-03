@@ -52,13 +52,13 @@ void RadarSpan::orderRadarInput(std::ifstream& input_file)
             continue;
        }
 
-        double x,y;
+        double x, y;
         iss >> x >> y;
  
 
-        if (getDistance(x,y) > visibility_range_)
+        if (getDistance(x, y) > visibility_range_)
             continue;
-        indexed_angular_dist_.push_back({idx-3, getAngularDistance(x,y)});
+        indexed_angular_dist_.push_back({idx-3, getAngularDistance(x, y)});
 
     }
 
