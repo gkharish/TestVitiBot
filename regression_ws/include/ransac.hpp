@@ -21,30 +21,21 @@ public:
         float y;
     }Coordinate;
    
-    std::pair<double, double>  calculateSlopeIntercept(std::vector<Coordinate>& coordinate_list);
+    std::pair<double, double>  calculateSlopeIntercept(std::vector<Coordinate>& coordinate_list); // model 
    
 
     void extractDataFromInput(const std::string file_name);
     
-    void generateRandomSamples(int num_sample);
+    std::pair<std::vector<Coordinate>, std::vector<Coordinate>> generateRandomSamples(int num_sample); 
 
-    std::pair<std::vector<Coordinate>, std::vector<Coordinate>> generateRandomSamples2(int num_sample);
-
-    void errorModel();
-
-    double getDistanceFromLineError(float x, float y, double slope, double intercept);
+    double getDistanceFromLineError(float x, float y, double slope, double intercept); // Error model
 
     double sumOfSquaredError(std::vector<Coordinate>& coordinate_list, double slope, double intercept);
    
     std::pair<double, double>  ransacFit();
-    // std::pair<std::vector<Coordinate>, std::vector<Coordinate>> random_filtered_samples;
 
 private:
-    int m_length;
-
     std::vector<Coordinate> m_entire_data_points;
-    std::vector<Coordinate> m_selected_data_points;
-    std::vector<Coordinate> m_nonselected_data_points;
 
     double m_slope, m_intercept;
     

@@ -67,55 +67,7 @@ void Ransac::extractDataFromInput(const std::string file_name)
     input_file.close();
 }
 
-void Ransac::generateRandomSamples(int num_sample)
-{
-    auto data_size = m_entire_data_points.size();
-
-    if (num_sample <= 0 || num_sample > data_size) 
-    {
-        std::cerr << "Invalid sample size." << std::endl;
-        return;
-    }
-
-    std::random_device rd;
-    std::mt19937 gen(rd());
-    std::uniform_int_distribution<int> distribution(0, data_size - 1);
-
-    // Getting selected n samples
-    std::vector<int> selected_index;
-    for (int i = 0; i < num_sample; ++i) 
-    {
-        int index = distribution(gen);
-  
-        Coordinate point_selected = m_entire_data_points[index];
-        m_selected_data_points.push_back(point_selected);
-
-        selected_index.push_back(index);
-    }
-
-    // Getting a vector of non selected samples
-    for(int i = 0; i < data_size; ++i)
-    {
-        bool is_already_selected = false ;
-        for(int j =0; j < num_sample; ++j)
-        {
-            if (i == selected_index[j])
-            {
-                is_already_selected = true;
-                break;
-            }
-        }
-        if(!is_already_selected)
-        {
-
-            Coordinate point_nonselected = m_entire_data_points[i];
-            m_nonselected_data_points.push_back(point_nonselected);
-        }
-        
-    }
-}
-
-std::pair<std::vector<Ransac::Coordinate>, std::vector<Ransac::Coordinate>> Ransac::generateRandomSamples2(int num_sample)
+std::pair<std::vector<Ransac::Coordinate>, std::vector<Ransac::Coordinate>> Ransac::generateRandomSamples(int num_sample)
 {
     std::pair<std::vector<Coordinate>, std::vector<Coordinate>> random_filtered_samples;
 
@@ -172,7 +124,7 @@ std::pair<double, double>  Ransac::ransacFit()
 
     while (iterations < k)
     {
-        auto random_filtered_samples = generateRandomSamples2(n);
+        auto random_filtered_samples = generateRandomSamples(n);
         auto selected_data_points = random_filtered_samples.first;
         auto nonselected_data_points = random_filtered_samples.second;
 
@@ -224,7 +176,7 @@ int  main(int argc, char ** argv)
         input_file_name = argv[1];
     }
 
-    // Ransac parameters
+    // Ransac parameters TODO: get it from config file
     int n = 2;
     int k = 85;
     int d = 20;
