@@ -10,18 +10,18 @@ Ransac::~Ransac()
     
 }
 
-std::pair<double, double>  Ransac::calculateSlopeIntercept(std::vector<float>& x, std::vector<float>& y)
+std::pair<double, double>  Ransac::calculateSlopeIntercept(std::vector<Coordinate>& coordinate_list)
 {
-    auto data_size = x.size();
+    auto data_size = coordinate_list.size();
     double sum_x = 0.0, sum_y = 0.0, sum_xy = 0.0, sum_x2 = 0.0;
 
     for (auto i =0; i < data_size; i++)
     {
-        sum_x += x[i];
-        sum_y += y[i];
+        sum_x += coordinate_list[i].x;
+        sum_y += coordinate_list[i].y;
 
-        sum_xy += x[i]*y[i];
-        sum_x2 += x[i]*x[i];
+        sum_xy += coordinate_list[i].x * coordinate_list[i].y;
+        sum_x2 += coordinate_list[i].x * coordinate_list[i].x ;
     }
 
         // intercept
@@ -58,8 +58,13 @@ void Ransac::extractDataFromInput(const std::string file_name)
         float x,y;
         ss >>x >>y;
 
-        m_x.push_back(x);
-        m_y.push_back(y);
+        // m_x.push_back(x);
+        // m_y.push_back(y);
+
+        Coordinate point;
+        point.x = x;
+        point.y = y;
+        m_entire_data_points.push_back(point);
     }
 
     input_file.close();
@@ -67,7 +72,8 @@ void Ransac::extractDataFromInput(const std::string file_name)
 
 void Ransac::generateRandomSamples(int num_sample)
 {
-    auto data_size = m_x.size();
+    auto data_size = m_entire_data_points.size();
+
     if (num_sample <= 0 || num_sample > data_size) 
     {
         std::cerr << "Invalid sample size." << std::endl;
@@ -83,8 +89,13 @@ void Ransac::generateRandomSamples(int num_sample)
     for (int i = 0; i < num_sample; ++i) 
     {
         int index = distribution(gen);
-        m_selected_x.push_back(m_x[index]);
-        m_selected_y.push_back(m_y[index]);
+        // m_selected_x.push_back(m_x[index]);
+        // m_selected_y.push_back(m_y[index]);
+
+
+        Coordinate point_selected = m_entire_data_points[index];
+        m_selected_data_points.push_back(point_selected);
+
         selected_index.push_back(index);
     }
 
@@ -102,8 +113,11 @@ void Ransac::generateRandomSamples(int num_sample)
         }
         if(!is_already_selected)
         {
-            m_nonselected_x.push_back(m_x[i]);
-            m_nonselected_y.push_back(m_y[i]);
+            // m_nonselected_x.push_back(m_x[i]);
+            // m_nonselected_y.push_back(m_y[i]);
+
+            Coordinate point_nonselected = m_entire_data_points[i];
+            m_nonselected_data_points.push_back(point_nonselected);
         }
         
     }
@@ -115,12 +129,13 @@ double Ransac::getDistanceFromLineError(float x, float y, double slope, double i
     return dist;
 }
 
-double Ransac::sumOfSquaredError(std::vector<float>selected_x, std::vector<float>selected_y, double slope, double intercept)
+
+double Ransac::sumOfSquaredError(std::vector<Coordinate>& selected_coordinate_list, double slope, double intercept)
 {
     double  sumError = 0.0;
-    for (auto i =0; i < selected_x.size(); i++)
+    for (auto i =0; i < selected_coordinate_list.size(); i++)
     {
-        sumError += getDistanceFromLineError(selected_x[i], selected_y[i], slope, intercept);
+        sumError += getDistanceFromLineError(selected_coordinate_list[i].x, selected_coordinate_list[i].y, slope, intercept);
     }
     std::cout << "Debug in sumOfSquaredError:1 "  << ", "<< sumError << std::endl;
     return sumError;
@@ -137,24 +152,24 @@ std::pair<double, double>  Ransac::ransacFit()
     while (iterations < k)
     {
         generateRandomSamples(n);
-        auto model = calculateSlopeIntercept(m_selected_x, m_selected_y);
+        auto model = calculateSlopeIntercept(m_selected_data_points);
 
    
 
-        for(auto i = 0; i < m_nonselected_x.size(); ++i)
+        for(auto i = 0; i < m_nonselected_data_points.size(); ++i)
         {
-            auto err = getDistanceFromLineError(m_nonselected_x[i], m_nonselected_y[i], model.first, model.second);
+            auto err = getDistanceFromLineError(m_nonselected_data_points[i].x, m_nonselected_data_points[i].y, model.first, model.second);
             if (err < t)
             {
-                m_selected_x.push_back(m_nonselected_x[i]);
-                m_selected_y.push_back(m_nonselected_y[i]);
+                m_selected_data_points.push_back(m_nonselected_data_points[i]);
+                // m_selected_y.push_back(m_nonselected_y[i]);
             }
         }
 
-        if (m_selected_x.size() > d)
+        if (m_selected_data_points.size() > d)
         {
-            auto better_model = calculateSlopeIntercept(m_selected_x, m_selected_y);
-            auto sum_err = sumOfSquaredError(m_selected_x, m_selected_y, better_model.first, better_model.second);
+            auto better_model = calculateSlopeIntercept(m_selected_data_points);
+            auto sum_err = sumOfSquaredError(m_selected_data_points, better_model.first, better_model.second);
             if (sum_err < best_error)
             {
                 best_model = better_model;
@@ -162,10 +177,14 @@ std::pair<double, double>  Ransac::ransacFit()
             }
         }
         // reset all vectors
-        m_selected_x.clear();
-        m_selected_y.clear();
-        m_nonselected_x.clear();
-        m_nonselected_y.clear();
+        // m_selected_x.clear();
+        // m_selected_y.clear();
+        // m_nonselected_x.clear();
+        // m_nonselected_y.clear();
+
+        m_selected_data_points.clear();
+        m_nonselected_data_points.clear();
+        
 
         iterations++;
 
