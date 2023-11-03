@@ -34,8 +34,8 @@ public:
 
 private:
     int m_length;
-    std::vector<float> m_x, m_random_x, m_nonselected_x;
-    std::vector<float> m_y, m_random_y, m_nonselected_y;
+    std::vector<float> m_x, m_selected_x, m_nonselected_x;
+    std::vector<float> m_y, m_selected_y, m_nonselected_y;
 
     double m_slope, m_intercept;
     

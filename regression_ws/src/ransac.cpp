@@ -83,8 +83,8 @@ void Ransac::generateRandomSamples(int num_sample)
     for (int i = 0; i < num_sample; ++i) 
     {
         int index = distribution(gen);
-        m_random_x.push_back(m_x[index]);
-        m_random_y.push_back(m_y[index]);
+        m_selected_x.push_back(m_x[index]);
+        m_selected_y.push_back(m_y[index]);
         selected_index.push_back(index);
     }
 
@@ -137,7 +137,7 @@ std::pair<double, double>  Ransac::ransacFit()
     while (iterations < k)
     {
         generateRandomSamples(n);
-        auto model = calculateSlopeIntercept(m_random_x, m_random_y);
+        auto model = calculateSlopeIntercept(m_selected_x, m_selected_y);
 
    
 
@@ -146,15 +146,15 @@ std::pair<double, double>  Ransac::ransacFit()
             auto err = getDistanceFromLineError(m_nonselected_x[i], m_nonselected_y[i], model.first, model.second);
             if (err < t)
             {
-                m_random_x.push_back(m_nonselected_x[i]);
-                m_random_y.push_back(m_nonselected_y[i]);
+                m_selected_x.push_back(m_nonselected_x[i]);
+                m_selected_y.push_back(m_nonselected_y[i]);
             }
         }
 
-        if (m_random_x.size() > d)
+        if (m_selected_x.size() > d)
         {
-            auto better_model = calculateSlopeIntercept(m_random_x, m_random_y);
-            auto sum_err = sumOfSquaredError(m_random_x, m_random_y, better_model.first, better_model.second);
+            auto better_model = calculateSlopeIntercept(m_selected_x, m_selected_y);
+            auto sum_err = sumOfSquaredError(m_selected_x, m_selected_y, better_model.first, better_model.second);
             if (sum_err < best_error)
             {
                 best_model = better_model;
@@ -162,8 +162,8 @@ std::pair<double, double>  Ransac::ransacFit()
             }
         }
         // reset all vectors
-        m_random_x.clear();
-        m_random_y.clear();
+        m_selected_x.clear();
+        m_selected_y.clear();
         m_nonselected_x.clear();
         m_nonselected_y.clear();
 
