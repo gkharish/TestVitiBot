@@ -65,8 +65,7 @@ Answers to Theoretical Quesions:
 En considérant que le calcul du modèle et de l'erreur sont en O(1), quelle est la complexité de ton implémentation de l'algorithme, en fonction de N le nombre de points et K le nombre d'itérations ?
 
 
-O(k*(N+ (N-n)*n))
-I'm not very sure about it.
+O(k*(N+ N + (N-n) + N +N) = O(k*(5N -n))
 
 ##### d) Bonus
 
