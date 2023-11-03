@@ -28,6 +28,8 @@ public:
     
     void generateRandomSamples(int num_sample);
 
+    void generateRandomSamples2(int num_sample);
+
     void errorModel();
 
     double getDistanceFromLineError(float x, float y, double slope, double intercept);

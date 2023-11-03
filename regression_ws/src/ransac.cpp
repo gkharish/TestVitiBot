@@ -115,6 +115,36 @@ void Ransac::generateRandomSamples(int num_sample)
     }
 }
 
+void Ransac::generateRandomSamples2(int num_sample)
+{
+    auto data_size = m_entire_data_points.size();
+
+    if (num_sample <= 0 || num_sample > data_size) 
+    {
+        std::cerr << "Invalid sample size." << std::endl;
+        return;
+    }
+
+    std::random_device rd;
+    std::mt19937 gen(rd());
+  
+    // Randomly shuffle the original data points.
+    std::shuffle(m_entire_data_points.begin(), m_entire_data_points.end(), gen);
+    
+    // Choose the first 'n' elements as the selected data points 
+    for (int i = 0; i < n; ++i) {
+        m_selected_data_points.push_back(m_entire_data_points[i]);
+    }
+    
+    // And the rest and the  rest as the non selected.
+    std::vector<int> nonSelectedSamples;
+    
+    for (int i = n; i < m_entire_data_points.size(); ++i) {
+        m_nonselected_data_points.push_back(m_entire_data_points[i]);
+    }
+
+}
+
 double Ransac::getDistanceFromLineError(float x, float y, double slope, double intercept)
 {
     double dist = std::abs(slope * x - y + intercept) / std::sqrt( slope* slope + 1);
@@ -143,10 +173,9 @@ std::pair<double, double>  Ransac::ransacFit()
 
     while (iterations < k)
     {
-        generateRandomSamples(n);
-        auto model = calculateSlopeIntercept(m_selected_data_points);
+        generateRandomSamples2(n);
 
-   
+        auto model = calculateSlopeIntercept(m_selected_data_points);
 
         for(auto i = 0; i < m_nonselected_data_points.size(); ++i)
         {
@@ -168,10 +197,10 @@ std::pair<double, double>  Ransac::ransacFit()
                 best_error = sum_err;
             }
         }
+
         // reset all vectors
         m_selected_data_points.clear();
         m_nonselected_data_points.clear();
-
 
         iterations++;
 
