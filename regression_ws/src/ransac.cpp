@@ -2,12 +2,10 @@
 
 Ransac::Ransac(int n, int k,  int d, double t ):n(n), k(k), d(d), t(t)
 {
-
 }
 
 Ransac::~Ransac()
-{
-    
+{    
 }
 
 std::pair<double, double>  Ransac::calculateSlopeIntercept(std::vector<Coordinate>& coordinate_list)
@@ -55,7 +53,7 @@ void Ransac::extractDataFromInput(const std::string file_name)
     while(std::getline(input_file, line))
     {
         std::stringstream ss(line);
-        float x,y;
+        float x, y;
         ss >>x >>y;
 
         Coordinate point;
@@ -159,8 +157,7 @@ std::pair<double, double>  Ransac::ransacFit()
 
     return best_model;
 }
-
-
+    
 int  main(int argc, char ** argv)
 {
     std::cout << "'Ransac using Linear Regression!\n" << std::endl;

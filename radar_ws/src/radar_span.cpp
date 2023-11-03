@@ -22,8 +22,10 @@ double RadarSpan::getDistance(double& x, double& y)
 double RadarSpan::getAngularDistance(double& x, double& y)
 {
     auto ang = std::atan2(y,x);
+
     if (ang < 0.) 
         ang += 2*M_PI;
+
     return ang;
 }
 
@@ -42,13 +44,13 @@ void RadarSpan::orderRadarInput(std::ifstream& input_file)
 
         if(idx == 1)
         {   
-            iss >> visibility_range_;
+            iss >> m_visibility_range;
             continue;
         }           
        
        if(idx == 2)
        {
-            iss >> number_obstacles_;
+            iss >> m_number_obstacles;
             continue;
        }
 
@@ -56,19 +58,19 @@ void RadarSpan::orderRadarInput(std::ifstream& input_file)
         iss >> x >> y;
  
 
-        if (getDistance(x, y) > visibility_range_)
+        if (getDistance(x, y) > m_visibility_range)
             continue;
-        indexed_angular_dist_.push_back({idx-3, getAngularDistance(x, y)});
+        m_indexed_angular_dist.push_back({idx-3, getAngularDistance(x, y)});
 
     }
 
-    std::cout << "Debug: angular_dist_store_ " << indexed_angular_dist_.size() << std::endl;
+    std::cout << "Debug: Number of obstacle within visible range: " << m_indexed_angular_dist.size() << std::endl;
 
     // Sort the array 
-    std::sort(indexed_angular_dist_.begin(), indexed_angular_dist_.end(), compareIndices);
+    std::sort(m_indexed_angular_dist.begin(), m_indexed_angular_dist.end(), compareIndices);
     
     // Extract the sorted indices and display the output
-    for (const auto &pair : indexed_angular_dist_) {
+    for (const auto &pair : m_indexed_angular_dist) {
         std::cout << pair.first << " ";
     }
 

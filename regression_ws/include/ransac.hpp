@@ -23,7 +23,6 @@ public:
    
     std::pair<double, double>  calculateSlopeIntercept(std::vector<Coordinate>& coordinate_list); // model 
    
-
     void extractDataFromInput(const std::string file_name);
     
     std::pair<std::vector<Coordinate>, std::vector<Coordinate>> generateRandomSamples(int num_sample); 

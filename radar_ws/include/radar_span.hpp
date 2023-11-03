@@ -10,27 +10,18 @@
 
 class RadarSpan
 {
-    public: 
-RadarSpan();
-~RadarSpan();
-void orderRadarInput(std::ifstream& input_file);
+public: 
+    RadarSpan();
+    ~RadarSpan();
 
-double getDistance(double& x, double& y);
-double getAngularDistance(double& x, double& y);
+    void orderRadarInput(std::ifstream& input_file);
 
-
-
+    double getDistance(double& x, double& y);
+    double getAngularDistance(double& x, double& y);
 
 private:
-std::vector<std::pair<int, double>> indexed_angular_dist_;
-std::vector<int> sorted_obstacle_index_;
+    std::vector<std::pair<int, double>> m_indexed_angular_dist;
 
-
-std::string input_file_name_ = "1-Radar/input1.txt";
-std::string output_file_name = "1-Radar/tets_output1.txt";
-
-
-double visibility_range_;
-int number_obstacles_;
-
+    double m_visibility_range;
+    int m_number_obstacles;
 };
