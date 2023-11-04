@@ -157,6 +157,24 @@ std::pair<double, double>  Ransac::ransacFit()
 
     return best_model;
 }
+
+void loadConfigFile(int &n, int &k,  int &d, double  &t) 
+{
+    std::string config_file_name = ("config.txt");
+    std::fstream config_file(config_file_name);
+    if (!config_file.is_open()) {
+        std::cerr << "Failed to open the input file." << std::endl;
+        return;
+    }
+    std::string line;
+
+
+        std::getline(config_file, line);
+        std::getline(config_file, line);
+        std::stringstream ss(line);
+        ss >> n >> k >> d >>t;
+
+}
     
 int  main(int argc, char ** argv)
 {
@@ -178,6 +196,8 @@ int  main(int argc, char ** argv)
     int k = 85;
     int d = 20;
     double t =  0.02;
+
+    loadConfigFile(n,k,d,t);
 
     Ransac ransac(n,k,d,t);
     ransac.extractDataFromInput(input_file_name);
