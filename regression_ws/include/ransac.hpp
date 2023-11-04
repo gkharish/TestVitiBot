@@ -13,6 +13,7 @@ class Ransac
 public:
 
     Ransac(int n, int k,  int d, double  t );
+    Ransac(std::string config_file_name);
 
     ~Ransac();
 
@@ -32,6 +33,8 @@ public:
     double sumOfSquaredError(std::vector<Coordinate>& coordinate_list, double slope, double intercept);
    
     std::pair<double, double>  ransacFit();
+    
+    void loadConfigFile(std::string config_file_name);
 
 private:
     std::vector<Coordinate> m_entire_data_points;
@@ -40,6 +43,5 @@ private:
     
     // regression parameter
     int n, k, d;
-    double  t;
-    
+    double  t;   
 };

@@ -1,3 +1,5 @@
+#pragma once
+
 #include <iostream>
 #include <vector>
 #include <fstream>
@@ -11,16 +13,11 @@ class LinearRegression
 {
 public:
 
-    LinearRegression(int n);
+    LinearRegression();
 
     ~LinearRegression();
 
     void  calculateSlopeIntercept();
-
-    float predict(float& input_x);
-    float sumOfSquaredError();
-
-    float errorIn(float num);
 
     void extractDataFromInput(const std::string file_name);
     

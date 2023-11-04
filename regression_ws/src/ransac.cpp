@@ -2,6 +2,12 @@
 
 Ransac::Ransac(int n, int k,  int d, double t ):n(n), k(k), d(d), t(t)
 {
+
+}
+
+Ransac::Ransac(std::string config_file_name)
+{
+    loadConfigFile(config_file_name);
 }
 
 Ransac::~Ransac()
@@ -158,9 +164,8 @@ std::pair<double, double>  Ransac::ransacFit()
     return best_model;
 }
 
-void loadConfigFile(int &n, int &k,  int &d, double  &t) 
+void Ransac::loadConfigFile(std::string config_file_name) 
 {
-    std::string config_file_name = ("config.txt");
     std::fstream config_file(config_file_name);
     if (!config_file.is_open()) {
         std::cerr << "Failed to open the input file." << std::endl;
@@ -168,43 +173,10 @@ void loadConfigFile(int &n, int &k,  int &d, double  &t)
     }
     std::string line;
 
-
-        std::getline(config_file, line);
-        std::getline(config_file, line);
-        std::stringstream ss(line);
-        ss >> n >> k >> d >>t;
-
-}
-    
-int  main(int argc, char ** argv)
-{
-    std::cout << "'Ransac using Linear Regression!\n" << std::endl;
-    std::string input_file_name = ("test_input/input.txt");
-
-    if (argc != 2) {
-        std::cerr << "Usage: " << argv[0] << " <filename>" << std::endl;
-        std::cout << "WARNING: Using default file name: " << input_file_name << std::endl;
-    }
-    else 
-    {
-        // Get the filename from the command-line arguments.
-        input_file_name = argv[1];
-    }
-
-    // Ransac parameters TODO: get it from config file
-    int n = 2;
-    int k = 85;
-    int d = 20;
-    double t =  0.02;
-
-    loadConfigFile(n,k,d,t);
-
-    Ransac ransac(n,k,d,t);
-    ransac.extractDataFromInput(input_file_name);
-    auto best_model = ransac.ransacFit();
-
-    std::cout << "\n Best ransacFit Linear model slope: " << best_model.first<< std::endl;
-    std::cout << "\n Best ransacFit Linear model intercept: " << best_model.second<< std::endl;
+    std::getline(config_file, line);
+    std::getline(config_file, line);
+    std::stringstream ss(line);
+    ss >> n >> k >> d >>t;
 
 }
 

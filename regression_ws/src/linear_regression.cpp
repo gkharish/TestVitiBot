@@ -1,6 +1,6 @@
 #include "linear_regression.hpp"
 
-LinearRegression::LinearRegression(int n) : m_length(n)
+LinearRegression::LinearRegression()
 {
 
     m_sum_x = 0.f;
@@ -79,9 +79,9 @@ std::vector<float> LinearRegression::getModel()
 
 int  main(int argc, char ** argv)
 {
-    std::cout << "'Linear Regression module!\n" << std::endl;
+    std::cout << "'Linear Regression!\n" << std::endl;
     std::string input_file_name = ("test_input/input.txt");
-    
+
     if (argc != 2) {
         std::cerr << "Usage: " << argv[0] << " <filename>" << std::endl;
         std::cout << "WARNING: Using default file name: " << input_file_name << std::endl;
@@ -92,12 +92,10 @@ int  main(int argc, char ** argv)
         input_file_name = argv[1];
     }
 
-
-    LinearRegression linear_regression(10);
+    LinearRegression linear_regression;
     linear_regression.extractDataFromInput(input_file_name);
     auto model = linear_regression.getModel();
 
     std::cout << "\n Linear model slope: " << model[0]<< std::endl;
     std::cout << "\n Linear model intercept: " << model[1]<< std::endl;
-
 }
